@@ -1,4 +1,4 @@
-# 🚀 Futuristic AI-Enhanced Portfolio Website
+# 🚀 Futuristic Personal Portfolio
 
 A **fully responsive, futuristic personal portfolio website** designed to merge **professional polish with creative innovation**.
 This project provides an **immersive user experience** with stunning visuals, smooth animations, and AI-powered interactivity.
