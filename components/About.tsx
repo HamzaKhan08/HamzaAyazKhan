@@ -83,17 +83,23 @@ const About: React.FC = () => {
           }
         });
       });
-      
+
       // Line drawing effect
-      gsap.from('.timeline-line', {
-        scaleY: 0,
-        transformOrigin: "top center",
-        ease: "none",
-        scrollTrigger: {
-          trigger: '.timeline-container',
-          start: "top 70%",
-          end: "bottom 80%",
-          scrub: 1
+      const timelineContainers = gsap.utils.toArray('.timeline-container');
+      timelineContainers.forEach((container: any) => {
+        const line = container.querySelector('.timeline-line');
+        if (line) {
+          gsap.from(line, {
+            scaleY: 0,
+            transformOrigin: "top center",
+            ease: "none",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 70%",
+              end: "bottom 80%",
+              scrub: 1
+            }
+          });
         }
       });
 
@@ -104,7 +110,7 @@ const About: React.FC = () => {
 
   return (
     <section id="about" ref={containerRef} className="bg-white dark:bg-charcoal relative overflow-hidden transition-colors duration-500">
-      
+
       {/* BIO SECTION */}
       <div ref={bioRef} className="py-24 md:py-32 px-6 md:px-12 border-b border-zinc-200 dark:border-white/5">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
@@ -120,17 +126,17 @@ const About: React.FC = () => {
           {/* Right Column */}
           <div className="col-span-1 lg:col-span-7 space-y-8">
             <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-            I am a Full-Stack Engineer with experience building scalable, production-grade web applications and AI-powered systems.
-            I work across the stack using React, Node.js, MongoDB, and real-time technologies to design reliable and performant solutions.
-            My background includes developing SaaS platforms, real-time workflows, and AI integrations with measurable impact on performance and user engagement.
-            I focus on clean architecture, secure APIs, and maintainable code that scales with both users and complexity.
+              I am a Full-Stack Engineer with experience building scalable, production-grade web applications and AI-powered systems.
+              I work across the stack using React, Node.js, MongoDB, and real-time technologies to design reliable and performant solutions.
+              My background includes developing SaaS platforms, real-time workflows, and AI integrations with measurable impact on performance and user engagement.
+              I focus on clean architecture, secure APIs, and maintainable code that scales with both users and complexity.
             </p>
             <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-            Through internships and projects, I have optimized systems, improved application responsiveness, and delivered features used in real-world environments.
-            I value strong fundamentals, thoughtful problem-solving, and engineering decisions backed by data.
-            I am motivated to work on high-impact products and grow in fast-paced, engineering-driven teams.
+              Through internships and projects, I have optimized systems, improved application responsiveness, and delivered features used in real-world environments.
+              I value strong fundamentals, thoughtful problem-solving, and engineering decisions backed by data.
+              I am motivated to work on high-impact products and grow in fast-paced, engineering-driven teams.
             </p>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-8 border-t border-zinc-200 dark:border-zinc-800/50 mt-8">
               <div>
                 <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Frontend</h4>
@@ -190,7 +196,7 @@ const About: React.FC = () => {
       {/* TIMELINE SECTION */}
       <div className="timeline-container py-24 md:py-32 px-6 md:px-12 relative">
         <div className="max-w-5xl mx-auto relative z-10">
-          
+
           {/* Header */}
           <div className="mb-16 md:mb-24 text-center">
             <h2 className="text-xs md:text-sm font-bold tracking-[0.2em] text-zinc-500 uppercase mb-4">The Journey</h2>
@@ -204,7 +210,7 @@ const About: React.FC = () => {
             <div className="space-y-12 md:space-y-32">
               {experienceData.map((item, index) => (
                 <div key={item.id} className={`timeline-item flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8 ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
-                  
+
                   {/* Date Side */}
                   <div className="w-full md:w-1/2 flex justify-start md:justify-end md:px-12 text-zinc-500 font-mono text-xs md:text-sm tracking-wider">
                     <div className={index % 2 === 0 ? "md:text-right" : "md:text-left"}>
@@ -217,9 +223,9 @@ const About: React.FC = () => {
 
                   {/* Content Side */}
                   <div className="w-full md:w-1/2 md:px-12 relative pl-6 md:pl-12 border-l border-zinc-200 dark:border-zinc-800 md:border-none">
-                     {/* Mobile Dot/Line Indicator */}
-                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-zinc-500 to-transparent md:hidden" />
-                     
+                    {/* Mobile Dot/Line Indicator */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-zinc-500 to-transparent md:hidden" />
+
                     <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors duration-300">
                       <h4 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-white mb-1">{item.role}</h4>
                       <h5 className="text-indigo-500 dark:text-indigo-400 text-xs md:text-sm font-medium mb-4">{item.company}</h5>
@@ -237,7 +243,7 @@ const About: React.FC = () => {
 
       <div className="timeline-container py-24 md:py-32 px-6 md:px-12 relative">
         <div className="max-w-5xl mx-auto relative z-10">
-          
+
           {/* Header */}
           <div className="mb-16 md:mb-24 text-center">
             <h2 className="text-xs md:text-sm font-bold tracking-[0.2em] text-zinc-500 uppercase mb-4">-----</h2>
@@ -251,7 +257,7 @@ const About: React.FC = () => {
             <div className="space-y-12 md:space-y-32">
               {educationData.map((item, index) => (
                 <div key={item.id} className={`timeline-item flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8 ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
-                  
+
                   {/* Date Side */}
                   <div className="w-full md:w-1/2 flex justify-start md:justify-end md:px-12 text-zinc-500 font-mono text-xs md:text-sm tracking-wider">
                     <div className={index % 2 === 0 ? "md:text-right" : "md:text-left"}>
@@ -264,9 +270,9 @@ const About: React.FC = () => {
 
                   {/* Content Side */}
                   <div className="w-full md:w-1/2 md:px-12 relative pl-6 md:pl-12 border-l border-zinc-200 dark:border-zinc-800 md:border-none">
-                     {/* Mobile Dot/Line Indicator */}
-                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-zinc-500 to-transparent md:hidden" />
-                     
+                    {/* Mobile Dot/Line Indicator */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-zinc-500 to-transparent md:hidden" />
+
                     <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors duration-300">
                       <h4 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-white mb-1">{item.institution}</h4>
                       <h5 className="text-indigo-500 dark:text-indigo-400 text-xs md:text-sm font-medium mb-4">{item.address}</h5>

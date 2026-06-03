@@ -8,9 +8,14 @@ const Cursor: React.FC = () => {
   useEffect(() => {
     const mouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
-      
+
       const target = e.target as HTMLElement;
-      setIsPointer(window.getComputedStyle(target).cursor === 'pointer');
+      const isClickable =
+        window.getComputedStyle(target).cursor === 'pointer' ||
+        target.closest('a') !== null ||
+        target.closest('button') !== null;
+
+      setIsPointer(isClickable);
     };
 
     window.addEventListener('mousemove', mouseMove);

@@ -20,6 +20,15 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
   const scrollToSection = (id: string) => {
     setIsOpen(false);
     const element = document.getElementById(id);
@@ -32,18 +41,17 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 transition-all duration-500 ease-in-out ${
-          isScrolled 
-            ? 'py-4 bg-white/80 dark:bg-obsidian/80 backdrop-blur-md border-b border-zinc-200 dark:border-white/5 shadow-sm' 
+        className={`fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 transition-all duration-500 ease-in-out ${isScrolled
+            ? 'py-4 bg-white/80 dark:bg-obsidian/80 backdrop-blur-md border-b border-zinc-200 dark:border-white/5 shadow-sm'
             : 'py-8 bg-transparent'
-        }`}
+          }`}
       >
-        <div 
-          className="text-xl md:text-2xl font-black tracking-tighter cursor-pointer text-zinc-900 dark:text-white z-50 select-none" 
+        <div
+          className="text-xl md:text-2xl font-black tracking-tighter cursor-pointer text-zinc-900 dark:text-white z-50 select-none"
           onClick={() => scrollToSection('hero')}
         >
           Hamza_Ayaz_Khan
@@ -65,7 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
           </div>
 
           {/* Theme Toggle */}
-          <button 
+          <button
             onClick={toggleTheme}
             className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-white z-50"
             aria-label="Toggle theme"
@@ -74,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
           </button>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden z-50 text-zinc-900 dark:text-white"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
@@ -94,7 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
             transition={{ type: "tween", duration: 0.4, ease: "circOut" }}
             className="fixed inset-0 bg-zinc-50 dark:bg-obsidian z-40 flex flex-col items-center justify-center md:hidden"
           >
-             <div className="flex flex-col space-y-10 text-center">
+            <div className="flex flex-col space-y-10 text-center">
               {navItems.map((item) => (
                 <button
                   key={item}
@@ -104,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
                   {item}
                 </button>
               ))}
-             </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

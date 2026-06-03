@@ -21,25 +21,32 @@ const Contact: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!formState.name || !formState.email || !formState.message) {
       setStatus("error");
       setErrorMessage("Please fill in all fields.");
       return;
     }
-  
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formState.email)) {
+      setStatus("error");
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
     try {
       setStatus("loading");
-  
+
       await sendEmail({
         name: formState.name,
         email: formState.email,
         message: formState.message,
       });
-  
+
       setStatus("success");
       setFormState({ name: "", email: "", message: "" });
-  
+
     } catch (error) {
       console.error(error);
       setStatus("error");
@@ -49,7 +56,7 @@ const Contact: React.FC = () => {
 
   return (
     <section id="contact" className="min-h-screen bg-zinc-100 dark:bg-black flex items-center justify-center py-20 md:py-24 px-6 md:px-12 relative overflow-hidden transition-colors duration-500">
-      
+
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-zinc-300/20 dark:bg-zinc-800/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-200/20 dark:bg-indigo-900/10 rounded-full blur-[100px]" />
@@ -74,7 +81,7 @@ const Contact: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
-          
+
           {/* Name Input */}
           <div className="group relative">
             <input
@@ -87,8 +94,8 @@ const Contact: React.FC = () => {
               placeholder=" "
               autoComplete="off"
             />
-            <label 
-              htmlFor="name" 
+            <label
+              htmlFor="name"
               className="absolute left-0 top-4 text-zinc-500 text-lg md:text-xl transition-all peer-focus:-top-6 peer-focus:text-xs peer-focus:text-zinc-900 dark:peer-focus:text-white peer-[:not(:placeholder-shown)]:-top-6 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-zinc-900 dark:peer-[:not(:placeholder-shown)]:text-white pointer-events-none"
             >
               Your Name
@@ -108,8 +115,8 @@ const Contact: React.FC = () => {
               placeholder=" "
               autoComplete="off"
             />
-            <label 
-              htmlFor="email" 
+            <label
+              htmlFor="email"
               className="absolute left-0 top-4 text-zinc-500 text-lg md:text-xl transition-all peer-focus:-top-6 peer-focus:text-xs peer-focus:text-zinc-900 dark:peer-focus:text-white peer-[:not(:placeholder-shown)]:-top-6 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-zinc-900 dark:peer-[:not(:placeholder-shown)]:text-white pointer-events-none"
             >
               Email Address
@@ -128,8 +135,8 @@ const Contact: React.FC = () => {
               className="block w-full bg-transparent border-b border-zinc-300 dark:border-zinc-800 py-4 text-zinc-900 dark:text-white text-lg md:text-xl focus:border-zinc-900 dark:focus:border-white focus:outline-none transition-colors peer resize-none"
               placeholder=" "
             />
-            <label 
-              htmlFor="message" 
+            <label
+              htmlFor="message"
               className="absolute left-0 top-4 text-zinc-500 text-lg md:text-xl transition-all peer-focus:-top-6 peer-focus:text-xs peer-focus:text-zinc-900 dark:peer-focus:text-white peer-[:not(:placeholder-shown)]:-top-6 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-zinc-900 dark:peer-[:not(:placeholder-shown)]:text-white pointer-events-none"
             >
               Write your message....
@@ -140,9 +147,9 @@ const Contact: React.FC = () => {
           {/* Status Message Area */}
           <AnimatePresence mode='wait'>
             {status === 'error' && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="flex items-center gap-2 text-red-400"
               >
@@ -151,9 +158,9 @@ const Contact: React.FC = () => {
               </motion.div>
             )}
             {status === 'success' && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="flex items-center gap-2 text-green-500 dark:text-green-400"
               >
@@ -194,24 +201,24 @@ const Contact: React.FC = () => {
 
       <footer className="absolute bottom-6 left-0 right-0 flex flex-col items-center justify-center space-y-5">
         <div className="flex items-center gap-8">
-            <a 
-              href="https://linkedin.com/in/hamzaayazkhan" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 transform hover:scale-110"
-              aria-label="LinkedIn"
-            >
-                <Linkedin size={20} strokeWidth={1.5} />
-            </a>
-            <a 
-              href="https://github.com/hamzakhan08" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 transform hover:scale-110"
-              aria-label="Twitter"
-            >
-                <Github size={20} strokeWidth={1.5} />
-            </a>
+          <a
+            href="https://linkedin.com/in/hamzaayazkhan"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 transform hover:scale-110"
+            aria-label="LinkedIn"
+          >
+            <Linkedin size={20} strokeWidth={1.5} />
+          </a>
+          <a
+            href="https://github.com/hamzakhan08"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 transform hover:scale-110"
+            aria-label="Twitter"
+          >
+            <Github size={20} strokeWidth={1.5} />
+          </a>
         </div>
         <p className="footer-signature text-zinc-400 dark:text-zinc-800 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-300">&copy; {new Date().getFullYear()} Hamza_Ayaz_Khan.</p>
       </footer>
