@@ -111,7 +111,7 @@ const About: React.FC = () => {
       const bioTl = gsap.timeline({
         scrollTrigger: {
           trigger: bioRef.current,
-          start: "top 80%",
+          start: "top 90%",
         }
       });
 
@@ -155,8 +155,8 @@ const About: React.FC = () => {
           ease: "none",
           scrollTrigger: {
             trigger: bioTextRef.current,
-            start: "top 85%",
-            end: "bottom 50%",
+            start: "top 90%",
+            end: "bottom 60%",
             scrub: true,
           }
         });
@@ -175,8 +175,8 @@ const About: React.FC = () => {
           ease: "power2.out",
           scrollTrigger: {
             trigger: bioText2Ref.current,
-            start: "top 85%",
-            end: "bottom 50%",
+            start: "top 90%",
+            end: "bottom 60%",
             scrub: true,
           }
         });
@@ -193,7 +193,7 @@ const About: React.FC = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: header,
-            start: "top 85%",
+            start: "top 90%",
           }
         });
       });
@@ -209,7 +209,7 @@ const About: React.FC = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: item,
-            start: "top 85%",
+            start: "top 90%",
             toggleActions: "play none none reverse"
           }
         });
@@ -250,13 +250,13 @@ const About: React.FC = () => {
             <h2 className="bio-heading text-indigo-500 dark:text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs mb-6">About Me</h2>
             <h3 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white leading-tight mb-6 perspective-1000">
               {"Bridging the gap between".split(" ").map((word, index) => (
-                <span key={index} className="inline-block overflow-hidden pb-1 -mb-1">
+                <span key={index} className="inline-block pb-1 -mb-1">
                   <span className="heading-word inline-block origin-bottom">{word}&nbsp;</span>
                 </span>
               ))}
               <br />
               {"design & engineering.".split(" ").map((word, index) => (
-                <span key={`highlight-${index}`} className="inline-block overflow-hidden pb-1 -mb-1">
+                <span key={`highlight-${index}`} className="inline-block pb-1 -mb-1">
                   <span className="heading-word text-zinc-500 inline-block origin-bottom">{word}&nbsp;</span>
                 </span>
               ))}

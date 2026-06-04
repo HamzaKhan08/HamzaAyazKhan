@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Github, ExternalLink, ArrowRight } from 'lucide-react';
+import { Github, ExternalLink } from 'lucide-react';
 import { Project } from '../types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -137,11 +137,11 @@ const Projects: React.FC = () => {
 
   return (
     <section id="projects" ref={sectionRef} className="bg-zinc-50 dark:bg-obsidian relative transition-colors duration-500">
-      <div className="w-full relative pb-[10vh]">
+      <div className="w-full relative lg:pb-[10vh]">
         {projectsData.map((project, index) => (
           <div
             key={project.id}
-            className="project-panel sticky top-0 w-full h-[100dvh] flex items-center justify-center relative bg-zinc-50 dark:bg-obsidian overflow-hidden transition-colors duration-500 shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.4)] border-t border-zinc-200/50 dark:border-zinc-800/50"
+            className="project-panel lg:sticky lg:top-0 w-full min-h-screen lg:h-[100dvh] flex items-center justify-center relative bg-zinc-50 dark:bg-obsidian overflow-hidden transition-colors duration-500 shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.4)] border-t border-zinc-200/50 dark:border-zinc-800/50"
             style={{ zIndex: index }}
           >
             {/* Background Number Watermark */}
@@ -151,8 +151,8 @@ const Projects: React.FC = () => {
               </span>
             </div>
 
-            <div className="w-full h-full max-w-[1400px] mx-auto px-4 md:px-12 z-10 project-content overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 min-h-full items-center py-24 lg:py-12">
+            <div className="w-full lg:h-full max-w-[1400px] mx-auto px-4 md:px-12 z-10 project-content lg:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] py-20 lg:py-0">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 min-h-full items-center lg:py-12">
 
                 {/* Content Side (5 Cols) - Glassmorphism Card */}
                 <div className="project-info col-span-1 lg:col-span-5 flex flex-col justify-center space-y-4 sm:space-y-6 lg:space-y-8 order-2 lg:order-1 p-6 sm:p-8 md:p-10 lg:p-12 rounded-[2rem] backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40 border border-white/60 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative overflow-hidden mt-4 lg:mt-0">
@@ -213,6 +213,7 @@ const Projects: React.FC = () => {
                     <img
                       src={project.imageUrl}
                       alt={project.title}
+                      loading="lazy"
                       className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] grayscale group-hover:grayscale-0"
                     />
                   </div>
