@@ -87,7 +87,7 @@ const TiltCard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className="relative w-full h-full p-6 md:p-8 rounded-2xl transition-all duration-300 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700/80 shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 dark:hover:shadow-indigo-500/10"
+      className="relative w-full h-full p-5 sm:p-6 md:p-8 rounded-2xl transition-all duration-300 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700/80 shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 dark:hover:shadow-indigo-500/10 touch-pan-y"
     >
       <div style={{ transform: "translateZ(30px)" }} className="pointer-events-none flex flex-col h-full">
         {children}
@@ -276,7 +276,7 @@ const About: React.FC = () => {
               ))}
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-8 border-t border-zinc-200 dark:border-zinc-800/50 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pt-8 border-t border-zinc-200 dark:border-zinc-800/50 mt-8">
               <div className="skill-block" style={{ perspective: 1000 }}>
                 <TiltCard>
                   <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Frontend</h4>
