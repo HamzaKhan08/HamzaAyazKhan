@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ExperienceItem } from '../types';
 import { EducationItem } from '../types';
 
@@ -50,22 +51,151 @@ const educationData: EducationItem[] = [
   }
 ];
 
+const TiltCard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 400, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 400, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      className="relative w-full h-full p-6 md:p-8 rounded-2xl transition-all duration-300 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700/80 shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 dark:hover:shadow-indigo-500/10"
+    >
+      <div style={{ transform: "translateZ(30px)" }} className="pointer-events-none flex flex-col h-full">
+        {children}
+      </div>
+    </motion.div>
+  );
+};
+
 const About: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bioRef = useRef<HTMLDivElement>(null);
+  const bioTextRef = useRef<HTMLParagraphElement>(null);
+  const bioText2Ref = useRef<HTMLParagraphElement>(null);
+
+  const bioText1 = "I am a Full-Stack Engineer with experience building scalable, production-grade web applications and AI-powered systems. I work across the stack using React, Node.js, MongoDB, and real-time technologies to design reliable and performant solutions. My background includes developing SaaS platforms, real-time workflows, and AI integrations with measurable impact on performance and user engagement. I focus on clean architecture, secure APIs, and maintainable code that scales with both users and complexity.";
+  const bioText2 = "Through internships and projects, I have optimized systems, improved application responsiveness, and delivered features used in real-world environments. I value strong fundamentals, thoughtful problem-solving, and engineering decisions backed by data. I am motivated to work on high-impact products and grow in fast-paced, engineering-driven teams.";
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Bio Section Animation
-      gsap.from(bioRef.current, {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
+      // Bio Section Sequential Animation
+      const bioTl = gsap.timeline({
         scrollTrigger: {
           trigger: bioRef.current,
           start: "top 80%",
         }
+      });
+
+      bioTl.from('.bio-heading', {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power4.out",
+        skewY: 3
+      })
+        .from('.heading-word', {
+          y: 40,
+          rotationX: -90,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "back.out(2)"
+        }, "-=0.8")
+        .from('.bio-text', {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out"
+        }, "-=0.6")
+        .from('.skill-block', {
+          y: 30,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.05,
+          ease: "back.out(1.5)"
+        }, "-=0.4");
+
+      // Word scrub animation for the first paragraph
+      if (bioTextRef.current) {
+        const words = bioTextRef.current.querySelectorAll('.word');
+        gsap.to(words, {
+          opacity: 1,
+          stagger: 0.1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: bioTextRef.current,
+            start: "top 85%",
+            end: "bottom 50%",
+            scrub: true,
+          }
+        });
+      }
+
+      // Word scrub animation for the second paragraph (Reverse direction + Slide)
+      if (bioText2Ref.current) {
+        const words2 = bioText2Ref.current.querySelectorAll('.word2');
+        gsap.to(words2, {
+          opacity: 1,
+          y: 0,
+          stagger: {
+            each: 0.1,
+            from: "end" // Animates in exactly the opposite direction!
+          },
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: bioText2Ref.current,
+            start: "top 85%",
+            end: "bottom 50%",
+            scrub: true,
+          }
+        });
+      }
+
+      // Timeline Section Headers
+      const timelineHeaders = gsap.utils.toArray('.timeline-header');
+      timelineHeaders.forEach((header: any) => {
+        gsap.from(header.children, {
+          y: 40,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+          }
+        });
       });
 
       // Fade up effect for timeline items
@@ -73,12 +203,13 @@ const About: React.FC = () => {
       items.forEach((item: any) => {
         gsap.from(item, {
           opacity: 0,
-          y: 50,
-          duration: 1,
+          y: 40,
+          scale: 0.95,
+          duration: 0.8,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: item,
-            start: "top 90%",
-            end: "top 60%",
+            start: "top 85%",
             toggleActions: "play none none reverse"
           }
         });
@@ -116,77 +247,97 @@ const About: React.FC = () => {
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
           {/* Left Column */}
           <div className="col-span-1 lg:col-span-5">
-            <h2 className="text-indigo-500 dark:text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs mb-6">About Me</h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white leading-tight mb-6">
-              Bridging the gap between <br />
-              <span className="text-zinc-500">design & engineering.</span>
+            <h2 className="bio-heading text-indigo-500 dark:text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs mb-6">About Me</h2>
+            <h3 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white leading-tight mb-6 perspective-1000">
+              {"Bridging the gap between".split(" ").map((word, index) => (
+                <span key={index} className="inline-block overflow-hidden pb-1 -mb-1">
+                  <span className="heading-word inline-block origin-bottom">{word}&nbsp;</span>
+                </span>
+              ))}
+              <br />
+              {"design & engineering.".split(" ").map((word, index) => (
+                <span key={`highlight-${index}`} className="inline-block overflow-hidden pb-1 -mb-1">
+                  <span className="heading-word text-zinc-500 inline-block origin-bottom">{word}&nbsp;</span>
+                </span>
+              ))}
             </h3>
           </div>
 
           {/* Right Column */}
           <div className="col-span-1 lg:col-span-7 space-y-8">
-            <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-              I am a Full-Stack Engineer with experience building scalable, production-grade web applications and AI-powered systems.
-              I work across the stack using React, Node.js, MongoDB, and real-time technologies to design reliable and performant solutions.
-              My background includes developing SaaS platforms, real-time workflows, and AI integrations with measurable impact on performance and user engagement.
-              I focus on clean architecture, secure APIs, and maintainable code that scales with both users and complexity.
+            <p ref={bioTextRef} className="bio-text text-lg md:text-xl text-zinc-900 dark:text-white leading-relaxed font-light">
+              {bioText1.split(" ").map((word, index) => (
+                <span key={index} className="word opacity-20">{word}{" "}</span>
+              ))}
             </p>
-            <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-              Through internships and projects, I have optimized systems, improved application responsiveness, and delivered features used in real-world environments.
-              I value strong fundamentals, thoughtful problem-solving, and engineering decisions backed by data.
-              I am motivated to work on high-impact products and grow in fast-paced, engineering-driven teams.
+            <p ref={bioText2Ref} className="bio-text text-lg md:text-xl text-zinc-900 dark:text-white leading-relaxed font-light">
+              {bioText2.split(" ").map((word, index) => (
+                <span key={index} className="word2 opacity-20 inline-block translate-y-2">{word}&nbsp;</span>
+              ))}
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-8 border-t border-zinc-200 dark:border-zinc-800/50 mt-8">
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Frontend</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>React / Next.js</li>
-                  <li>Angular / HTML / CSS</li>
-                  <li>Tailwind CSS</li>
-                  <li>JavaScript</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Frontend</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>React / Next.js</li>
+                    <li>Angular / HTML / CSS</li>
+                    <li>Tailwind CSS</li>
+                    <li>JavaScript</li>
+                  </ul>
+                </TiltCard>
               </div>
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Backend</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>Node.js</li>
-                  <li>Express.js</li>
-                  <li>REST APIs</li>
-                  <li>WebSockets (Real-time)</li>
-                  <li>JWT Authentication</li>
-                  <li>MVC Architecture</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Backend</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>Node.js</li>
+                    <li>Express.js</li>
+                    <li>REST APIs</li>
+                    <li>WebSockets (Real-time)</li>
+                    <li>JWT Authentication</li>
+                    <li>MVC Architecture</li>
+                  </ul>
+                </TiltCard>
               </div>
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Database</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>MongoDB(Mongoose)</li>
-                  <li>MySQL</li>
-                  <li>Firebase RealTime database</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Database</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>MongoDB(Mongoose)</li>
+                    <li>MySQL</li>
+                    <li>Firebase RealTime database</li>
+                  </ul>
+                </TiltCard>
               </div>
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Programming</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>C / C++</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Programming</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>C / C++</li>
+                  </ul>
+                </TiltCard>
               </div>
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">AI/ML</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>ML model integrations(sentiment, vision, prediction)</li>
-                  <li>Regression Models(Linear, Ridge, Lesso)</li>
-                  <li>LLM integrations(RAG)</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">AI/ML</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>ML model integrations(sentiment, vision, prediction)</li>
+                    <li>Regression Models(Linear, Ridge, Lesso)</li>
+                    <li>LLM integrations(RAG)</li>
+                  </ul>
+                </TiltCard>
               </div>
-              <div>
-                <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Tools</h4>
-                <ul className="text-zinc-500 text-sm space-y-2 font-mono">
-                  <li>Git / GitHub</li>
-                  <li>Postman / Vercel</li>
-                  <li>Netlify / Firebase</li>
-                </ul>
+              <div className="skill-block" style={{ perspective: 1000 }}>
+                <TiltCard>
+                  <h4 className="text-zinc-900 dark:text-white font-bold mb-3 tracking-wide">Tools</h4>
+                  <ul className="text-zinc-500 text-sm space-y-2 font-mono">
+                    <li>Git / GitHub</li>
+                    <li>Postman / Vercel</li>
+                    <li>Netlify / Firebase</li>
+                  </ul>
+                </TiltCard>
               </div>
             </div>
           </div>
@@ -198,7 +349,7 @@ const About: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
 
           {/* Header */}
-          <div className="mb-16 md:mb-24 text-center">
+          <div className="timeline-header mb-16 md:mb-24 text-center">
             <h2 className="text-xs md:text-sm font-bold tracking-[0.2em] text-zinc-500 uppercase mb-4">The Journey</h2>
             <h3 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white">Experience & Growth</h3>
           </div>
@@ -245,7 +396,7 @@ const About: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
 
           {/* Header */}
-          <div className="mb-16 md:mb-24 text-center">
+          <div className="timeline-header mb-16 md:mb-24 text-center">
             <h2 className="text-xs md:text-sm font-bold tracking-[0.2em] text-zinc-500 uppercase mb-4">-----</h2>
             <h3 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white">Education</h3>
           </div>

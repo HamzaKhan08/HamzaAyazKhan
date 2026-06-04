@@ -71,46 +71,63 @@ const projectsData: Project[] = [
 
 const Projects: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      const cards = gsap.utils.toArray('.project-panel') as HTMLElement[];
 
-      // Desktop: Horizontal Scroll
-      mm.add("(min-width: 1024px)", () => {
-        const sections = gsap.utils.toArray(".project-panel");
+      cards.forEach((card, index) => {
+        const innerContent = card.querySelector('.project-content');
+        const watermark = card.querySelector('.project-watermark');
+        const imgContainer = card.querySelector('.project-image-container');
+        const infoContainer = card.querySelector('.project-info');
 
-        gsap.to(sections, {
-          xPercent: -100 * (sections.length - 1),
-          ease: "none",
-          scrollTrigger: {
-            trigger: triggerRef.current,
-            pin: true,
-            scrub: 1,
-            snap: 1 / (sections.length - 1),
-            end: () => "+=" + (sections.length * 1000)
-          }
-        });
-      });
+        // Apple-style Stack Effect: Scale down and blur as the next card scrolls over it
+        if (index < cards.length - 1) {
+          const nextCard = cards[index + 1];
+          gsap.to([innerContent, watermark], {
+            scale: 0.85,
+            opacity: 0,
+            filter: "blur(15px)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: nextCard,
+              start: "top bottom",
+              end: "top top",
+              scrub: true,
+            }
+          });
+        }
 
-      // Mobile: Fade in on scroll
-      mm.add("(max-width: 1023px)", () => {
-        const sections = gsap.utils.toArray(".project-panel");
-        sections.forEach((section: any) => {
-          const content = section.querySelector('.project-content');
-          if (content) {
-            gsap.from(content, {
-              y: 50,
+        // Parallax Reveal Effect: Image and text slide up gracefully as they enter the screen
+        if (index > 0) {
+          if (imgContainer) {
+            gsap.from(imgContainer, {
+              y: "25%",
+              scale: 0.9,
               opacity: 0,
-              duration: 0.8,
               scrollTrigger: {
-                trigger: section,
-                start: "top 70%",
+                trigger: card,
+                start: "top bottom",
+                end: "top top",
+                scrub: 1,
               }
             });
           }
-        });
+
+          if (infoContainer) {
+            gsap.from(infoContainer, {
+              y: "20%",
+              opacity: 0,
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "top top",
+                scrub: 1,
+              }
+            });
+          }
+        }
       });
 
     }, sectionRef);
@@ -119,98 +136,92 @@ const Projects: React.FC = () => {
   }, []);
 
   return (
-      <section id="projects" ref={sectionRef} className="bg-zinc-50 dark:bg-obsidian relative transition-colors duration-500">
-        <div
-          ref={triggerRef}
-          className="flex flex-col lg:flex-row lg:h-screen lg:flex-nowrap lg:overflow-hidden w-full"
-        >
-          {projectsData.map((project, index) => (
-            <div
-              key={project.id}
-              className="project-panel w-full min-h-screen lg:w-screen lg:h-screen flex-shrink-0 flex items-center justify-center relative border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-zinc-900/50 bg-zinc-50 dark:bg-obsidian lg:overflow-hidden py-20 lg:py-0 transition-colors duration-500"
-            >
+    <section id="projects" ref={sectionRef} className="bg-zinc-50 dark:bg-obsidian relative transition-colors duration-500">
+      <div className="w-full relative pb-[10vh]">
+        {projectsData.map((project, index) => (
+          <div
+            key={project.id}
+            className="project-panel sticky top-0 w-full h-[100dvh] flex items-center justify-center relative bg-zinc-50 dark:bg-obsidian overflow-hidden transition-colors duration-500 shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.4)] border-t border-zinc-200/50 dark:border-zinc-800/50"
+            style={{ zIndex: index }}
+          >
+            {/* Background Number Watermark */}
+            <div className="project-watermark absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
+              <span className="text-[35vw] font-black text-transparent bg-clip-text bg-gradient-to-b from-zinc-200/80 to-transparent dark:from-white/5 dark:to-transparent tracking-tighter leading-none transform translate-y-10">
+                0{index + 1}
+              </span>
+            </div>
 
-              {/* Background Number Watermark */}
-              <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-                <span className="text-[30vw] font-black text-zinc-900/[0.03] dark:text-white/[0.02] tracking-tighter leading-none transform translate-y-10">
-                  0{index + 1}
-                </span>
-              </div>
+            <div className="w-full max-w-[1400px] px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 z-10 items-center h-full project-content">
 
-              <div className="w-full max-w-[1400px] px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 z-10 items-center h-full project-content">
+              {/* Content Side (5 Cols) - Glassmorphism Card */}
+              <div className="project-info col-span-1 lg:col-span-5 flex flex-col justify-center space-y-4 lg:space-y-8 order-2 lg:order-1 p-6 md:p-10 lg:p-12 rounded-[2rem] backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40 border border-white/60 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 pointer-events-none" />
 
-                {/* Content Side (5 Cols) */}
-                <div className="col-span-1 lg:col-span-5 flex flex-col justify-center space-y-8 order-2 lg:order-1">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <span className="h-px w-8 bg-indigo-500"></span>
-                      <h4 className="text-indigo-500 tracking-[0.2em] uppercase text-xs font-bold">{project.category}</h4>
-                    </div>
-                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold text-zinc-900 dark:text-white tracking-tighter leading-[0.9]">{project.title}</h2>
+                <div className="space-y-2 lg:space-y-4 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <span className="h-px w-8 bg-indigo-500"></span>
+                    <h4 className="text-indigo-500 tracking-[0.2em] uppercase text-xs font-bold">{project.category}</h4>
                   </div>
-
-                  <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed max-w-lg border-l-2 border-zinc-200 dark:border-zinc-800 pl-6">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-3">
-                    {project.tech.map(t => (
-                      <span key={t} className="px-3 py-1.5 border border-zinc-300 dark:border-zinc-800 text-[10px] md:text-xs text-zinc-600 dark:text-zinc-300 font-medium uppercase tracking-wider hover:bg-zinc-200 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors duration-300 cursor-default">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none group flex items-center justify-center gap-3 px-8 py-4 bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 dark:border-zinc-800 text-white hover:bg-zinc-800 dark:hover:bg-white dark:hover:text-black transition-all duration-300 rounded-sm cursor-pointer shadow-lg hover:shadow-xl"
-                    >
-                      <Github size={18} className="group-hover:scale-110 transition-transform" />
-                      <span className="uppercase text-xs font-bold tracking-widest">GitHub</span>
-                    </a>
-                    {/*<a 
-                    href={project.liveUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex-1 sm:flex-none group flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-white text-black border border-zinc-200 dark:border-white hover:bg-zinc-100 dark:hover:bg-transparent dark:hover:text-white transition-all duration-300 rounded-sm cursor-pointer shadow-lg hover:shadow-xl"
-                  >
-                    <ExternalLink size={18} className="group-hover:scale-110 transition-transform" />
-                    <span className="uppercase text-xs font-bold tracking-widest">Live Demo</span>
-                  </a>*/}
-                  </div>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-zinc-900 dark:text-white tracking-tighter leading-[1]">{project.title}</h2>
                 </div>
 
-                {/* Image Side (7 Cols) - Enhanced Hover Effect */}
-                {/* Wrapped in an anchor to make the entire card clickable, improving UX especially on mobile */}
-                <a
-                  href={project.liveUrl !== '#' ? project.liveUrl : undefined}
-                  target={project.liveUrl !== '#' ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  className={`col-span-1 lg:col-span-7 w-full h-[50vh] lg:h-[65vh] order-1 lg:order-2 perspective-1000 my-8 lg:my-0 block group ${project.liveUrl === '#' ? 'cursor-default' : 'cursor-pointer'}`}
-                >
-                  <div className="relative w-full h-full overflow-hidden rounded-lg shadow-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] transform hover:-translate-y-3 hover:shadow-2xl hover:shadow-indigo-500/30 dark:hover:shadow-indigo-900/50 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 dark:hover:border-indigo-400/50 bg-zinc-100 dark:bg-zinc-900 active:scale-[0.98]">
-                    <div className="absolute inset-0 bg-black/10 dark:bg-black/20 group-hover:bg-transparent transition-all duration-700 z-10" />
-                    <img
-                      src={project.imageUrl}
-                      alt={project.title}
-                      className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] grayscale group-hover:grayscale-0"
-                    />
+                <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed max-w-lg border-l-2 border-indigo-500/30 pl-6 relative z-10">
+                  {project.description}
+                </p>
 
-                    {/* Hover Overlay Detail */}
-                    {/* <div className="absolute inset-0 border-[1px] border-white/20 m-4 scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-20 flex items-end justify-between p-6 bg-gradient-to-t from-black/50 via-transparent to-transparent">
-                      <div className="text-white text-xs tracking-widest font-bold drop-shadow-md">VIEW CASE STUDY</div>
-                      <ArrowRight className="text-white drop-shadow-md" />
-                  </div> */}
-                  </div>
-                </a>
+                <div className="flex flex-wrap gap-3 relative z-10">
+                  {project.tech.map(t => (
+                    <span key={t} className="px-4 py-2 rounded-full border border-zinc-300/50 dark:border-zinc-700/50 bg-white/50 dark:bg-black/50 backdrop-blur-md text-[10px] md:text-xs text-zinc-700 dark:text-zinc-300 font-medium uppercase tracking-wider hover:border-indigo-500 hover:text-indigo-500 dark:hover:border-indigo-400 dark:hover:text-indigo-400 transition-all duration-300 cursor-default">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto relative z-10">
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none group flex items-center justify-center gap-3 px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 transition-all duration-300 rounded-full cursor-pointer shadow-lg hover:shadow-indigo-500/25"
+                  >
+                    <Github size={18} className="group-hover:scale-110 transition-transform" />
+                    <span className="uppercase text-xs font-bold tracking-widest">GitHub</span>
+                  </a>
+                  {project.liveUrl !== '#' && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none group flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-zinc-900 dark:border-white text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 rounded-full cursor-pointer shadow-lg"
+                    >
+                      <ExternalLink size={18} className="group-hover:scale-110 transition-transform" />
+                      <span className="uppercase text-xs font-bold tracking-widest">Live Demo</span>
+                    </a>
+                  )}
+                </div>
               </div>
+
+              <a
+                href={project.liveUrl !== '#' ? project.liveUrl : undefined}
+                target={project.liveUrl !== '#' ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className={`project-image-container col-span-1 lg:col-span-7 w-full h-[35vh] sm:h-[45vh] lg:h-[65vh] order-1 lg:order-2 perspective-1000 my-4 lg:my-0 block group ${project.liveUrl === '#' ? 'cursor-default' : 'cursor-pointer'}`}
+              >
+                <div className="relative w-full h-full overflow-hidden rounded-3xl shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] transform group-hover:-translate-y-2 group-hover:scale-[1.02] border border-white/40 dark:border-zinc-800/80 bg-zinc-100 dark:bg-zinc-900">
+                  <div className="absolute inset-0 bg-black/10 dark:bg-black/20 group-hover:bg-transparent transition-all duration-700 z-10" />
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] grayscale group-hover:grayscale-0"
+                  />
+                </div>
+              </a>
+
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 
